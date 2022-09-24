@@ -1,5 +1,4 @@
 const express = require("express");
-
 const app = express();
 
 //middleware function -> to convert frontend data into json
@@ -20,10 +19,7 @@ let users = [
     }
 ];
 
-app.get('/users',(req,res)=>{
-    console.log(req.query);
-    res.send(users);
-})
+app.get('/users',getUser)
 
 app.get("/", (req, res) => {
   res.sendFile("./views/index.html", { root: __dirname });
@@ -44,41 +40,16 @@ app.get("/users", (req, res) => {
 });
 
 //post request
-app.post("/users", (req, res) => {
-  //res.setHeader('Content-Type','application/json');
-  console.log(req.body);
-  users = req.body; //it sends data into a users variable
-  res.json({
-    message: "Data Recieved Successfully",
-    user: req.body,
-  });
-  res.end();
-});
+app.post("/users", postUser);
 
 
 //Update - > patch
 
-app.patch("/users",(req,res)=>{
-    console.log("req->body",req.body);
-//update data in users object
-let dataToBeUpdated= req.body;
-for(key in dataToBeUpdated){
-    users[key]= dataToBeUpdated[key];
-}
-
-    res.json({
-        message: "Data Updated Successfully"
-      });
-});
+app.patch("/users",updateUser);
 
 
 //delete data
-app.delete('/users',(req,res)=>{
-     users = {};
-     res.json({
-        message:"Data deleted Successfully"
-     })
-});
+app.delete('/users',deleteUser);
 
 //params
 app.get('/users/:username',(req,res)=>{
@@ -87,6 +58,43 @@ app.get('/users/:username',(req,res)=>{
   res.send("users name recieved");
   
 })
+
+
+function getUser(req,res){
+  console.log(req.query);
+  res.send(users);
+}
+function postUser(req, res)  {
+  
+  console.log(req.body);
+  users = req.body; //it sends data into a users variable
+  res.json({
+    message: "Data Recieved Successfully",
+    user: req.body,
+  });
+  res.end();
+}
+
+function updateUser(req,res){
+  console.log("req->body",req.body);
+//update data in users object
+let dataToBeUpdated= req.body;
+for(key in dataToBeUpdated){
+  users[key]= dataToBeUpdated[key];
+}
+
+  res.json({
+      message: "Data Updated Successfully"
+    });
+}
+
+function deleteUser(req,res){
+  users = {};
+  res.json({
+     message:"Data deleted Successfully"
+  })
+}
+
 
 
 //404 page
