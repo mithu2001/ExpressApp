@@ -19,7 +19,27 @@ let users = [
     }
 ];
 
-app.get('/users',getUser)
+//Router 
+const userRouter = express.Router();
+const authRouter = express.Router();
+app.use('/users',userRouter);//base route , router to use
+app.use('/auth',authRouter);//base route , router to use
+
+userRouter
+.route('/')
+.get(getUser)
+.post(postUser)
+.patch(updateUser)
+.delete(deleteUser)
+
+userRouter
+.route('/:username')
+.get(getUserByName)
+
+authRouter
+.route('/signup')
+.get(getSignUp)
+.post(postSignUp);
 
 app.get("/", (req, res) => {
   res.sendFile("./views/index.html", { root: __dirname });
@@ -39,25 +59,9 @@ app.get("/users", (req, res) => {
   res.send(users);
 });
 
-//post request
-app.post("/users", postUser);
 
 
-//Update - > patch
 
-app.patch("/users",updateUser);
-
-
-//delete data
-app.delete('/users',deleteUser);
-
-//params
-app.get('/users/:username',(req,res)=>{
-    console.log(req.params.username);
-    console.log(req.params);
-  res.send("users name recieved");
-  
-})
 
 
 function getUser(req,res){
@@ -94,6 +98,32 @@ function deleteUser(req,res){
      message:"Data deleted Successfully"
   })
 }
+
+function getUserByName(req,res){
+  console.log(req.params.username);
+  console.log(req.params);
+
+  res.send("users name recieved");
+  
+ 
+
+
+
+}
+
+function getSignUp(req, res){
+     res.sendFile('./public/index.html',{ root: __dirname });
+}
+
+function postSignUp(req,res){
+     let dataObj= req.body;
+     res.json({
+      message:"user signed up",
+      data:dataObj
+
+     });
+}
+
 
 
 
