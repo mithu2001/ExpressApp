@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-
+const mongoose = require("mongoose");
 //middleware function -> to convert frontend data into json
 app.use(express.json());
 app.listen(8000);
@@ -124,6 +124,52 @@ function postSignUp(req,res){
      });
 }
 
+//database link comes from mongodb atlas
+const db_link='mongodb+srv://guptatechnology:anjali_291102@cluster0.rzk9ls9.mongodb.net/?retryWrites=true&w=majority';
+mongoose.connect(db_link)
+.then(function(db){
+  // console.log(db);
+  console.log("DB is Connected");
+})
+.catch(function(err){
+  console.log(err);
+});
+
+//Schema
+const userSchema = mongoose.Schema({
+  name:{
+    type:String,
+    required:true
+  },
+  email:{
+    type:String,
+    required:true,
+    unique:true
+  },
+  password:{
+    type:String,
+    required:true,
+    minLength:8,
+  },
+  confirmPassword:{
+    type:String,
+    required:true,
+    minLength:8,
+  }
+});
+
+//models
+const userModel = mongoose.model('userModel',userSchema);
+(async function createUser(){
+  let user = {
+    name:'Mithu',
+    email:'jaishreeKrishna@gmail.com',
+    password:'123456789',
+    confirmPassword:'123456789'
+  };
+  let data =await userModel.create(user);
+  console.log(data);
+}());
 
 
 
